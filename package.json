@@ -16,9 +16,13 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2"
   },
+  "prisma": {
+    "seed": "ts-node ./prisma/seed.ts"
+  },
   "devDependencies": {
     "@remix-run/dev": "^1.6.3",
     "@remix-run/eslint-config": "^1.6.3",
+    "@types/bcryptjs": "^2.4.2",
     "@types/react": "^17.0.45",
     "@types/react-dom": "^17.0.17",
     "autoprefixer": "^10.4.7",
