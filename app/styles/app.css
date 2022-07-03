@@ -555,6 +555,10 @@ video {
   position: relative;
 }
 
+.m-0 {
+  margin: 0px;
+}
+
 .mb-12 {
   margin-bottom: 3rem;
 }
@@ -709,6 +713,11 @@ video {
 
 .leading-6 {
   line-height: 1.5rem;
+}
+
+.text-red-300 {
+  --tw-text-opacity: 1;
+  color: rgb(252 165 165 / var(--tw-text-opacity));
 }
 
 .text-slate-800 {
