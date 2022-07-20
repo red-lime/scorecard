@@ -1,5 +1,5 @@
 import { ActionFunction, redirect, json } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
+import { Form, Link, useActionData } from "@remix-run/react";
 import { db } from "~/utils/db.server";
 import { register } from "~/utils/session.server";
 
@@ -152,6 +152,7 @@ export default function SignUp() {
               Create an account
             </button>
           </Form>
+          <Link to="/signup">Haven't signed up? Click here to sign up.</Link>
         </div>
       </main>
     </div>

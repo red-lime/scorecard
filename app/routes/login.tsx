@@ -1,11 +1,12 @@
 import { ActionFunction, redirect, json } from "@remix-run/node";
-import { Form, useActionData } from "@remix-run/react";
-import { login } from "~/utils/session.server";
+import { Form, useActionData, useSearchParams } from "@remix-run/react";
+import { createUserSession, login } from "~/utils/session.server";
 
 function validateEmail(email: string) {
   if (!email.includes("." && "@")) {
     return `please use a valid email`;
   }
+  return null;
 }
 
 function makeLowerCase(text: string) {
@@ -16,6 +17,15 @@ function validatePassword(password: unknown) {
   if (typeof password !== "string" || password.length < 6) {
     return `Passwords must be at least 6 characters long`;
   }
+}
+
+function validateUrl(url: any) {
+  console.log(url);
+  let urls = ["/", "https://magpai.com"];
+  if (urls.includes(url)) {
+    return url;
+  }
+  return "/";
 }
 
 const badRequest = (data: ActionData) => {
@@ -38,8 +48,13 @@ export const action: ActionFunction = async ({ request }) => {
   const form = await request.formData();
   const email = form.get("email");
   const password = form.get("password");
+  const redirectTo = validateUrl(form.get("redirectTo") || "/");
 
-  if (typeof email !== "string" || typeof password !== "string") {
+  if (
+    typeof email !== "string" ||
+    typeof password !== "string" ||
+    typeof redirectTo !== "string"
+  ) {
     return badRequest({
       formError: "Form not submitted correctly",
     });
@@ -56,10 +71,7 @@ export const action: ActionFunction = async ({ request }) => {
   }
 
   const user = await login({ email, password });
-
-  if (user) {
-    return redirect("/");
-  }
+  console.log({ user });
 
   if (!user) {
     const error = badRequest({
@@ -68,12 +80,12 @@ export const action: ActionFunction = async ({ request }) => {
     });
     return error;
   }
-
-  return null;
+  return createUserSession(user.id, redirectTo);
 };
 
 export default function Login() {
   const actionData = useActionData<ActionData>();
+  const [searchParams] = useSearchParams();
 
   return (
     <div id="app">
@@ -81,6 +93,11 @@ export default function Login() {
         <div className="relative flex flex-1 flex-col items-center justify-center pt-12 pb-16">
           <div className="text-center text-2xl mb-12 font-bold">Login</div>
           <Form method="post" className="w-full max-w-sm">
+            <input
+              type="hidden"
+              name="redirectTo"
+              value={searchParams.get("redirectTo") ?? undefined}
+            />
             {actionData?.formError ? (
               <p className="text-sm mb-6 text-red-300 text-center">
                 {actionData?.formError}
